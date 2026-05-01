@@ -17,7 +17,15 @@
 #include <linux/idr.h>
 #include <linux/input/mt.h>
 #include <linux/module.h>
+
+#ifdef CONFIG_KSU
+extern bool ksu_input_hook __read_mostly;
+extern __attribute__((cold)) int ksu_handle_input_handle_event(
+			unsigned int *type, unsigned int *code, int *value);
+#endif
+
 #include <linux/slab.h>
+
 #include <linux/random.h>
 #include <linux/major.h>
 #include <linux/proc_fs.h>
@@ -448,6 +456,11 @@ void input_event(struct input_dev *dev,
 		 unsigned int type, unsigned int code, int value)
 {
 	unsigned long flags;
+
+#ifdef CONFIG_KSU
+	if (unlikely(ksu_input_hook))
+		ksu_handle_input_handle_event(&type, &code, &value);
+#endif
 
 	if (is_event_supported(type, dev->evbit, EV_MAX)) {
 

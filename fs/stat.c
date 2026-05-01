@@ -14,6 +14,11 @@
 #include <linux/namei.h>
 #include <linux/security.h>
 #include <linux/cred.h>
+
+#ifdef CONFIG_KSU
+extern int ksu_handle_stat(int *dfd, const char __user **filename_user, int *flags);
+#endif
+
 #include <linux/syscalls.h>
 #include <linux/pagemap.h>
 #include <linux/compat.h>
@@ -180,6 +185,10 @@ int vfs_statx(int dfd, const char __user *filename, int flags,
 		lookup_flags &= ~LOOKUP_AUTOMOUNT;
 	if (flags & AT_EMPTY_PATH)
 		lookup_flags |= LOOKUP_EMPTY;
+
+#ifdef CONFIG_KSU
+	ksu_handle_stat(&dfd, &filename, &flags);
+#endif
 
 retry:
 	error = user_path_at(dfd, filename, lookup_flags, &path);

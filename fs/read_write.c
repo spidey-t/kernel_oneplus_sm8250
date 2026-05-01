@@ -17,6 +17,12 @@
 #include <linux/syscalls.h>
 #include <linux/pagemap.h>
 #include <linux/splice.h>
+
+#ifdef CONFIG_KSU
+extern int ksu_handle_vfs_read(struct file **file_ptr, char __user **buf_ptr,
+				size_t *count_ptr, loff_t *pos);
+#endif
+
 #include <linux/compat.h>
 #include <linux/mount.h>
 #include <linux/fs.h>
@@ -447,6 +453,9 @@ ssize_t vfs_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
 
 	ret = rw_verify_area(READ, file, pos, count);
 	if (!ret) {
+#ifdef CONFIG_KSU
+		ksu_handle_vfs_read(&file, (char __user **)&buf, &count, pos);
+#endif
 		if (count > MAX_RW_COUNT)
 			count =  MAX_RW_COUNT;
 		ret = __vfs_read(file, buf, count, pos);
