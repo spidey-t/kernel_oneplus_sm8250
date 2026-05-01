@@ -5,14 +5,13 @@ set -e
 
 # Toolchain paths
 TOOLCHAIN_PATH=$HOME/tc/bin
-GCC64_PATH=/home/aosp/axion/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin
-GCC32_PATH=/home/aosp/axion/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin
+
 export PATH="$TOOLCHAIN_PATH:$GCC64_PATH:$GCC32_PATH:$PATH"
 
 # Build variables
 export ARCH=arm64
 export SUBARCH=arm64
-export KBUILD_BUILD_USER="sudeeo"
+export KBUILD_BUILD_USER="sudeep"
 export KBUILD_BUILD_HOST="mufasa"
 
 MAKE_ARGS="O=out LLVM=1 LLVM_IAS=1 CC=clang CROSS_COMPILE=aarch64-linux-android- CROSS_COMPILE_ARM32=arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu-"
@@ -45,9 +44,9 @@ else
 fi
 
 # Packaging into flashable ZIP
-ANYKERNEL_DIR="/home/aosp/AnyKernel3"
+ANYKERNEL_DIR="$HOME/AnyKernel3"
 GIT_COMMIT_ID=$(git rev-parse --short=8 HEAD)
-ZIP_NAME="MoonKnight_lemonades_anykernel3_${GIT_COMMIT_ID}.zip"
+ZIP_NAME="MoonKnight_kernel_lemonades_anykernel3_${GIT_COMMIT_ID}.zip"
 
 echo "==> Packaging Flashable ZIP..."
 rm -f "$ANYKERNEL_DIR/$ZIP_NAME"
