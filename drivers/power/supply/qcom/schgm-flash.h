@@ -8,10 +8,11 @@
 
 #include <linux/bitops.h>
 
+struct smb_charger;
+struct smb_irq_data;
+
 #ifdef OPLUS_FEATURE_CHG_BASIC
-#if defined(CONFIG_OPLUS_SM8250_CHARGER)
-#include "../../oplus/v1/charger_ic/oplus_battery_msm8250.h"
-#endif
+#include "../../oplus/charger_ic/oplus_battery_msm8250.h"
 #endif
 
 #ifndef __SCHGM_FLASH_SUB_H__
