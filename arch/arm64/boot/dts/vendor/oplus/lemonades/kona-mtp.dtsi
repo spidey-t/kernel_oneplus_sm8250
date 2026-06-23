@@ -254,7 +254,6 @@
 		black_gesture_support;
 		black_gesture_indep_support;
 		sportify_aod_gesture_support;
-		fw_edge_limit_support;
 		pressure_report_support;
 		charger_pump_support;
 		game_switch_support;
@@ -286,7 +285,7 @@
 			report_rate_default = <90>;
 			report_rate_game_value = <3>;
 			fps_report_rate = <60 2 90 1 120 1>; // 1:180Hz 2:120Hz 3:240Hz
-			fingerprint_and_grip_param_equal_19805 = <1>;
+			
 		};
 	};
 };

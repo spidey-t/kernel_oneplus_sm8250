@@ -4,7 +4,7 @@
 set -e
 
 # Toolchain paths
-TOOLCHAIN_PATH=$HOME/tc/bin
+TOOLCHAIN_PATH="/home/balaji/android/lunaris/prebuilts/clang/host/linux-x86/clang-r574158/bin"
 
 export PATH="$TOOLCHAIN_PATH:$GCC64_PATH:$GCC32_PATH:$PATH"
 
@@ -56,7 +56,9 @@ cp out/arch/arm64/boot/dts/vendor/oplus/kona-lemonades-overlay.dtbo "$ANYKERNEL_
 
 cd "$ANYKERNEL_DIR"
 zip -r9 "$ZIP_NAME" * -x .git README.md *placeholder
-mv "$ZIP_NAME" /home/aosp/kernel/
-cd /home/aosp/kernel/
+OUTPUT_DIR="$HOME/kernel-zips"
+mkdir -p "$OUTPUT_DIR"
+mv "$ZIP_NAME" "$OUTPUT_DIR"
+cd /home
 
 echo "==> Done! ZIP: $ZIP_NAME"
