@@ -1907,6 +1907,7 @@ static int syna_tcm_get_dynamic_config(struct syna_tcm_data *tcm_info,
 				       unsigned short *value)
 {
 	int retval = 0;
+	int orig_ret = 0;
 	unsigned char out_buf = (unsigned char)id;
 	unsigned char *resp_buf = NULL;
 	unsigned int resp_buf_size = 0, resp_length = 0;
@@ -1915,13 +1916,20 @@ static int syna_tcm_get_dynamic_config(struct syna_tcm_data *tcm_info,
 					&out_buf, sizeof(out_buf), &resp_buf,
 					&resp_buf_size, &resp_length,
 					RESPONSE_TIMEOUT_MS_SHORT);
+	orig_ret = retval;
+	TPD_INFO("DYNCFG cmd retval=%d resp_length=%u\n",
+		 retval, resp_length);
 	if (retval < 0 || resp_length < 2) {
 		retval = -EINVAL;
+		TPD_INFO("GET_DYNAMIC_CONFIG id=0x%x failed retval=%d\n",
+			 id, orig_ret);
 		TPD_INFO("Failed to read dynamic config\n");
 		goto exit;
 	}
 
 	*value = (unsigned short)le2_to_uint(resp_buf);
+	TPD_INFO("GET_DYNAMIC_CONFIG id=0x%x value=%u retval=%d\n",
+		 id, *value, retval);
 exit:
 	kfree(resp_buf);
 	return retval;
@@ -1946,15 +1954,20 @@ static int syna_tcm_set_dynamic_config(struct syna_tcm_data *tcm_info,
 					out_buf, sizeof(out_buf), &resp_buf,
 					&resp_buf_size, &resp_length,
 					RESPONSE_TIMEOUT_MS_SHORT);
+	TPD_INFO("DYNCFG cmd retval=%d resp_length=%u\n",
+		 retval, resp_length);
 	if (retval < 0) {
 		TPD_INFO("Failed to write command %s\n",
 			 STR(CMD_SET_DYNAMIC_CONFIG));
+		TPD_INFO("SET_DYNAMIC_CONFIG id=0x%x value=%u failed retval=%d\n",
+			 id, value, retval);
 		goto exit;
 	}
 
+	TPD_INFO("SET_DYNAMIC_CONFIG id=0x%x value=%u success\n",
+		 id, value);
 exit:
 	kfree(resp_buf);
-
 	return retval;
 }
 
