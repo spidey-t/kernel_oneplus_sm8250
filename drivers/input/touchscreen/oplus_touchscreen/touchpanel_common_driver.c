@@ -791,7 +791,7 @@ static void tp_touch_release(struct touchpanel_data *ts)
 	ts->irq_slot = 0;
 }
 
-static bool edge_point_process(struct touchpanel_data *ts,
+static bool __maybe_unused edge_point_process(struct touchpanel_data *ts,
 			       struct point_info points)
 {
 	if (ts->limit_edge) {
@@ -823,7 +823,7 @@ static bool edge_point_process(struct touchpanel_data *ts,
 	return false;
 }
 
-static bool corner_point_process(struct touchpanel_data *ts,
+static bool __maybe_unused corner_point_process(struct touchpanel_data *ts,
 				 struct corner_info *corner,
 				 struct point_info *points, int i)
 {
@@ -1128,7 +1128,7 @@ static void tp_touch_handle(struct touchpanel_data *ts)
 	uint8_t finger_num = 0, touch_near_edge = 0, finger_num_center = 0;
 	int obj_attention = 0;
 	struct point_info points[10];
-	struct corner_info corner[4];
+	// struct corner_info corner[4];
 	static bool up_status = false;
 	static struct point_info last_point = { .x = 0, .y = 0 };
 	static int touch_report_num = 0;
@@ -1183,13 +1183,14 @@ static void tp_touch_handle(struct touchpanel_data *ts)
 			if (((obj_attention & TOUCH_BIT_CHECK) >> i) & 0x01 &&
 			    (points[i].status != 0)) {
 				//Edge process before report abs
-				if (ts->edge_limit_support) {
-					if (corner_point_process(ts, corner,
-								 points, i) ||
-					    (!ts->drlimit_remove_support &&
-					     edge_point_process(ts, points[i])))
-						continue;
-				}
+				// checking fix for three finger touch in third party display
+				// if (ts->edge_limit_support) {
+				// 	if (corner_point_process(ts, corner,
+				// 				 points, i) ||
+				// 	    (!ts->drlimit_remove_support &&
+				// 	     edge_point_process(ts, points[i])))
+				// 		continue;
+				// }
 #ifdef TYPE_B_PROTOCOL
 				input_mt_slot(ts->input_dev, i);
 				input_mt_report_slot_state(ts->input_dev,
@@ -1198,7 +1199,7 @@ static void tp_touch_handle(struct touchpanel_data *ts)
 				touch_report_num++;
 				tp_touch_down(ts, points[i], touch_report_num,
 					      i);
-				SET_BIT(ts->irq_slot, (1 << i));
+				SET_BIT(ts->irq_slot, i); // three finger touch issue
 				finger_num++;
 				if (ts->ear_sense_support && ts->es_enable &&
 				    (((points[i].y <
