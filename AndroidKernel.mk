@@ -61,8 +61,9 @@ ifeq ($(KERNEL_LLVM_SUPPORT), true)
     endif
     $(warning "Using sdllvm" $(KERNEL_LLVM_BIN))
   else
-     KERNEL_LLVM_BIN := $(shell pwd)/$(CLANG) #Using aosp-llvm compiler
-    $(warning "Using aosp-llvm" $(KERNEL_LLVM_BIN))
+#      KERNEL_LLVM_BIN := $(shell pwd)/$(CLANG) #Using aosp-llvm compiler
+#     $(warning "Using aosp-llvm" $(KERNEL_LLVM_BIN))
+	 KERNEL_LLVM_BIN := $(shell pwd)/prebuilts/clang/host/linux-x86/clang-r563880c/bin/clang
   endif
 endif
 
@@ -72,7 +73,8 @@ KERNEL_GCC_NOANDROID_CHK := $(shell (echo "int main() {return 0;}" | $(KERNEL_CR
 
 real_cc :=
 ifeq ($(KERNEL_LLVM_SUPPORT),true)
-real_cc := REAL_CC=$(KERNEL_LLVM_BIN) CLANG_TRIPLE=aarch64-linux-gnu-
+# real_cc := REAL_CC=$(KERNEL_LLVM_BIN) CLANG_TRIPLE=aarch64-linux-gnu-
+real_cc := LLVM=1 LLVM_IAS=1 CC=$(KERNEL_LLVM_BIN) CLANG_TRIPLE=aarch64-linux-gnu-
 else
 ifeq ($(strip $(KERNEL_GCC_NOANDROID_CHK)),0)
 KERNEL_CFLAGS := KCFLAGS=-mno-android
